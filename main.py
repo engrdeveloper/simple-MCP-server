@@ -21,5 +21,5 @@ def add_numbers(
 
 
 if __name__ == "__main__":
-    mcp.run(transport="streamable-http", stateless_http=True, debug=True)
+    mcp.run(transport="streamable-http")
 
