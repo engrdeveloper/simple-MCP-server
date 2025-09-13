@@ -5,7 +5,7 @@ Simple MCP Server
 from mcp.server.fastmcp import FastMCP
 from pydantic import Field
 
-mcp = FastMCP("Simple MCP Server", port=8000, stateless_http=True, debug=True)
+mcp = FastMCP("Simple MCP Server", port=3000, stateless_http=True, debug=True)
 
 
 @mcp.tool(
