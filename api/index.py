@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple FastAPI server to handle Facebook OAuth callbacks
-Run this alongside your MCP server to handle Facebook redirects
+Vercel serverless function for Facebook OAuth callbacks
 """
 
 from fastapi import FastAPI, Request, HTTPException
@@ -10,42 +9,42 @@ import json
 import os
 import requests
 from dotenv import load_dotenv
-import uvicorn
 
+# Load environment variables
 load_dotenv()
 
+# Create FastAPI app
 app = FastAPI(title="Facebook OAuth Callback Server")
 
 # Facebook App Configuration
 FACEBOOK_APP_ID = os.getenv("FACEBOOK_APP_ID")
 FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET")
-FACEBOOK_REDIRECT_URI = os.getenv("FACEBOOK_REDIRECT_URI") or "http://localhost:8000/api/facebook/callback"
+FACEBOOK_REDIRECT_URI = os.getenv("FACEBOOK_REDIRECT_URI")
 LE_CHAT_USER_ID = os.getenv("LE_CHAT_USER_ID")
 
-# File to store user tokens (same as MCP server)
-USER_DATA_FILE = "facebook_users.json"
-
+# For Vercel, we'll use environment variables or a simple in-memory store
+# In production, you might want to use a database
 def load_user_data():
-    """Load user data from JSON file"""
-    if os.path.exists(USER_DATA_FILE):
-        with open(USER_DATA_FILE, 'r') as f:
-            return json.load(f)
+    """Load user data - in serverless environment, this would be from a database"""
+    # For demo purposes, return empty dict
+    # In production, implement proper data storage
     return {}
 
 def save_user_data(data):
-    """Save user data to JSON file"""
-    with open(USER_DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=2)
+    """Save user data - in serverless environment, this would be to a database"""
+    # For demo purposes, just log the data
+    print(f"User data to save: {json.dumps(data, indent=2)}")
+    # In production, implement proper data storage
 
 @app.get("/")
 async def root():
     """Health check endpoint"""
-    return {"message": "Facebook OAuth Callback Server", "status": "running"}
+    return {"message": "Facebook OAuth Callback Server", "status": "running", "deployment": "vercel"}
 
 @app.get("/api")
 async def api_root():
     """API root endpoint"""
-    return {"message": "Facebook OAuth Callback API", "status": "running"}
+    return {"message": "Facebook OAuth Callback API", "status": "running", "deployment": "vercel"}
 
 @app.get("/api/facebook/callback")
 async def facebook_callback(request: Request):
@@ -54,7 +53,6 @@ async def facebook_callback(request: Request):
         # Extract parameters from the request
         code = request.query_params.get("code")
         error = request.query_params.get("error")
-        
         
         if error:
             return HTMLResponse(f"""
@@ -274,7 +272,7 @@ async def facebook_callback(request: Request):
             </html>
             """)
         
-        # Save user data
+        # Save user data (in production, this would be to a database)
         user_data = load_user_data()
         facebook_user_id = LE_CHAT_USER_ID
         user_data[facebook_user_id] = {
@@ -398,11 +396,7 @@ async def facebook_callback(request: Request):
         </html>
         """)
 
-if __name__ == "__main__":
-    port = int(os.getenv("CALLBACK_PORT", "8000"))
-    print(f"🚀 Starting Facebook OAuth Callback Server on port {port}")
-    print(f"📍 Callback URL: http://localhost:{port}/api/facebook/callback")
-    print(f"📊 Health check: http://localhost:{port}/")
-    print("🛑 Press Ctrl+C to stop")
-    
-    uvicorn.run(app, host="0.0.0.0", port=port)
+# This is the handler that Vercel will call
+def handler(request):
+    """Vercel serverless function handler"""
+    return app(request)
