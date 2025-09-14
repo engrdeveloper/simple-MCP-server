@@ -53,3 +53,27 @@
 ## Test
 - Local: `http://localhost:8000/api/facebook/callback`
 - Vercel: `https://your-project-name.vercel.app/api/facebook/callback`
+
+## Troubleshooting
+
+### Vercel Function Crashes (500 Error)
+If you see "FUNCTION_INVOCATION_FAILED", check:
+1. Environment variables are set in Vercel dashboard
+2. Visit `https://your-project-name.vercel.app/` to see health check
+3. Check Vercel function logs in dashboard
+
+### Health Check
+Visit your domain root to see environment variable status:
+```json
+{
+  "message": "Facebook OAuth Callback Server",
+  "status": "running",
+  "deployment": "vercel",
+  "environment": {
+    "facebook_app_id_set": true,
+    "facebook_app_secret_set": true,
+    "redirect_uri_set": true,
+    "user_id_set": true
+  }
+}
+```

@@ -22,6 +22,16 @@ FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET")
 FACEBOOK_REDIRECT_URI = os.getenv("FACEBOOK_REDIRECT_URI")
 LE_CHAT_USER_ID = os.getenv("LE_CHAT_USER_ID")
 
+# Validate required environment variables
+if not FACEBOOK_APP_ID:
+    print("WARNING: FACEBOOK_APP_ID not set")
+if not FACEBOOK_APP_SECRET:
+    print("WARNING: FACEBOOK_APP_SECRET not set")
+if not FACEBOOK_REDIRECT_URI:
+    print("WARNING: FACEBOOK_REDIRECT_URI not set")
+if not LE_CHAT_USER_ID:
+    print("WARNING: LE_CHAT_USER_ID not set")
+
 # For Vercel, we'll use environment variables or a simple in-memory store
 # In production, you might want to use a database
 def load_user_data():
@@ -39,7 +49,17 @@ def save_user_data(data):
 @app.get("/")
 async def root():
     """Health check endpoint"""
-    return {"message": "Facebook OAuth Callback Server", "status": "running", "deployment": "vercel"}
+    return {
+        "message": "Facebook OAuth Callback Server", 
+        "status": "running", 
+        "deployment": "vercel",
+        "environment": {
+            "facebook_app_id_set": bool(FACEBOOK_APP_ID),
+            "facebook_app_secret_set": bool(FACEBOOK_APP_SECRET),
+            "redirect_uri_set": bool(FACEBOOK_REDIRECT_URI),
+            "user_id_set": bool(LE_CHAT_USER_ID)
+        }
+    }
 
 @app.get("/api")
 async def api_root():
@@ -397,6 +417,6 @@ async def facebook_callback(request: Request):
         """)
 
 # This is the handler that Vercel will call
-def handler(request):
-    """Vercel serverless function handler"""
-    return app(request)
+from mangum import Mangum
+
+handler = Mangum(app)
