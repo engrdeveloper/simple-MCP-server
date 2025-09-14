@@ -15,7 +15,7 @@
 
 3. **Run locally**
    ```bash
-   python index.py
+   python local_server.py
    ```
 
 4. **Test locally**
@@ -44,7 +44,7 @@
    ```
 
 ## Files
-- `index.py` - Main application (local development)
+- `local_server.py` - Local development server
 - `api/index.py` - Vercel serverless function
 - `requirements.txt` - Python dependencies
 - `vercel.json` - Vercel configuration

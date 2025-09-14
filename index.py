@@ -402,11 +402,7 @@ def handler(request):
     return app(request)
 
 if __name__ == "__main__":
-    import uvicorn
-    port = int(os.getenv("PORT", "8000"))
-    print(f"🚀 Starting Facebook OAuth Callback Server on port {port}")
-    print(f"📍 Callback URL: http://localhost:{port}/api/facebook/callback")
-    print(f"📊 Health check: http://localhost:{port}/")
-    print("🛑 Press Ctrl+C to stop")
-    
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    print("🚀 This file is for Vercel deployment only")
+    print("📁 For local development, use the api/index.py file")
+    print("🔧 To test locally, you can use a simple HTTP server or FastAPI")
+    print("💡 For full local development, consider using the original main.py approach")
